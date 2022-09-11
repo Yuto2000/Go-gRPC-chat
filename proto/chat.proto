@@ -1,0 +1,30 @@
+syntax = "proto3";
+package chat;
+
+option go_package = "gen/pb";
+
+import "proto/user.proto";
+
+service ChatService {
+  rpc Chat(stream ChatRequest) returns (stream ChatResponse) {}
+}
+
+message ChatRequest {
+  int32 room_id = 1;
+  User user = 2;
+
+  oneof action {
+    StartAction start = 3;
+    TalkAction talk = 4;
+  }
+
+  message StartAction {}
+
+  message TalkAction{
+    string message = 1;
+  }
+}
+
+message ChatResponse {
+  repeated string chatLogs = 1;
+}
