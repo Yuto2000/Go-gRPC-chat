@@ -1,12 +1,15 @@
 package client
 
 import (
+	"bufio"
 	"chat/build"
 	"chat/chat"
 	"chat/gen/pb"
 	"context"
 	"fmt"
+	"os"
 	"sync"
+	"time"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -14,8 +17,10 @@ import (
 
 type Chat struct {
 	sync.RWMutex
-	room *chat.Room
-	me   *chat.User
+	started  bool
+	finished bool
+	room     *chat.Room
+	me       *chat.User
 }
 
 func NewChat() *Chat {
@@ -45,7 +50,7 @@ func (c *Chat) run() error {
 		return err
 	}
 
-	return nil
+	return c.chat(ctx, pb.NewChatServiceClient(conn))
 }
 
 func (c *Chat) matching(ctx context.Context, cli pb.MatchServiceClient) error {
@@ -69,6 +74,146 @@ func (c *Chat) matching(ctx context.Context, cli pb.MatchServiceClient) error {
 			return nil
 		} else if resp.GetStatus() == pb.JoinRoomResponse_WAITING {
 			fmt.Println("Waiting matching...")
+		}
+	}
+}
+
+func (c *Chat) chat(ctx context.Context, cli pb.ChatServiceClient) error {
+	ct, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	stream, err := cli.Chat(ct)
+	if err != nil {
+		return err
+	}
+	defer stream.CloseSend()
+
+	go func() {
+		if err := c.send(ct, stream); err != nil {
+			cancel()
+		}
+	}()
+
+	if err = c.receive(ct, stream); err != nil {
+		cancel()
+		return err
+	}
+
+	return nil
+}
+
+func (c *Chat) send(ctx context.Context, stream pb.ChatService_ChatClient) error {
+	for {
+		c.RLock()
+
+		if c.finished {
+			c.RUnlock()
+			return nil
+
+		} else if !c.started {
+			err := stream.Send(&pb.ChatRequest{
+				RoomId: c.room.ID,
+				User: &pb.User{
+					Id:       c.me.ID,
+					NickName: c.me.NickName,
+				},
+				Action: &pb.ChatRequest_Start{
+					Start: &pb.ChatRequest_StartAction{},
+				},
+			})
+
+			c.RUnlock()
+			if err != nil {
+				return err
+			}
+
+			for {
+				c.RLock()
+				if c.started {
+					c.RUnlock()
+					fmt.Println("chat start!!!")
+					break
+				}
+				c.RUnlock()
+				fmt.Println("Waiting until another user ready")
+				time.Sleep(1 * time.Second)
+			}
+		} else {
+
+			c.RUnlock()
+			fmt.Print("Inpurt Your Message!")
+			stdin := bufio.NewScanner(os.Stdin)
+			stdin.Scan()
+
+			text := stdin.Text()
+
+			go func() {
+				err := stream.Send(&pb.ChatRequest{
+					RoomId: c.me.ID,
+					User: &pb.User{
+						Id:       c.me.ID,
+						NickName: c.me.NickName,
+					},
+					Action: &pb.ChatRequest_Talk{
+						Talk: &pb.ChatRequest_TalkAction{
+							Message: text,
+						},
+					},
+				})
+				if err != nil {
+					fmt.Println(err)
+				}
+			}()
+
+			ch := make(chan int)
+			go func(ch chan int) {
+				fmt.Println("")
+				for i := 0; i < 5; i++ {
+					fmt.Printf("freezing in %d second.\n", (5 - i))
+					time.Sleep(1 * time.Second)
+				}
+				fmt.Println("")
+				ch <- 0
+			}(ch)
+			<-ch
+		}
+
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+		}
+	}
+}
+
+func (c *Chat) receive(ctx context.Context, stream pb.ChatService_ChatClient) error {
+	for {
+		res, err := stream.Recv()
+		if err != nil {
+			return nil
+		}
+
+		c.Lock()
+		switch res.GetEvent().(type) {
+		case *pb.ChatResponse_Waiting:
+			// 待機中
+		case *pb.ChatResponse_Ready:
+			// 開始
+			c.started = true
+		case *pb.ChatResponse_Chated:
+			chatLogs := res.GetChated().ChatLogs
+			fmt.Println("chatLogs", chatLogs)
+		case *pb.ChatResponse_Finished:
+			c.finished = true
+			c.Unlock()
+			return nil
+		}
+		c.Unlock()
+
+		select {
+		case <- ctx.Done():
+			return nil
+		default:
 		}
 	}
 }

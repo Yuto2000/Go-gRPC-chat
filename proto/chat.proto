@@ -26,5 +26,17 @@ message ChatRequest {
 }
 
 message ChatResponse {
-  repeated string chatLogs = 1;
+  oneof event {
+    WaitingEvent waiting = 1;
+    ReadyEvent ready = 2;
+    ChatedEvent chated = 3;
+    FinishedEvent finished = 4;
+  }
+
+  message WaitingEvent {}
+  message ReadyEvent {}
+  message ChatedEvent {
+    repeated string chatLogs = 5;
+  }
+  message FinishedEvent {}
 }

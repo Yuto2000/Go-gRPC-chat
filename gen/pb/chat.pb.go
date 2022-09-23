@@ -122,7 +122,13 @@ type ChatResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ChatLogs []string `protobuf:"bytes,1,rep,name=chatLogs,proto3" json:"chatLogs,omitempty"`
+	// Types that are assignable to Event:
+	//
+	//	*ChatResponse_Waiting
+	//	*ChatResponse_Ready
+	//	*ChatResponse_Chated
+	//	*ChatResponse_Finished
+	Event isChatResponse_Event `protobuf_oneof:"event"`
 }
 
 func (x *ChatResponse) Reset() {
@@ -157,12 +163,68 @@ func (*ChatResponse) Descriptor() ([]byte, []int) {
 	return file_proto_chat_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ChatResponse) GetChatLogs() []string {
-	if x != nil {
-		return x.ChatLogs
+func (m *ChatResponse) GetEvent() isChatResponse_Event {
+	if m != nil {
+		return m.Event
 	}
 	return nil
 }
+
+func (x *ChatResponse) GetWaiting() *ChatResponse_WaitingEvent {
+	if x, ok := x.GetEvent().(*ChatResponse_Waiting); ok {
+		return x.Waiting
+	}
+	return nil
+}
+
+func (x *ChatResponse) GetReady() *ChatResponse_ReadyEvent {
+	if x, ok := x.GetEvent().(*ChatResponse_Ready); ok {
+		return x.Ready
+	}
+	return nil
+}
+
+func (x *ChatResponse) GetChated() *ChatResponse_ChatedEvent {
+	if x, ok := x.GetEvent().(*ChatResponse_Chated); ok {
+		return x.Chated
+	}
+	return nil
+}
+
+func (x *ChatResponse) GetFinished() *ChatResponse_FinishedEvent {
+	if x, ok := x.GetEvent().(*ChatResponse_Finished); ok {
+		return x.Finished
+	}
+	return nil
+}
+
+type isChatResponse_Event interface {
+	isChatResponse_Event()
+}
+
+type ChatResponse_Waiting struct {
+	Waiting *ChatResponse_WaitingEvent `protobuf:"bytes,1,opt,name=waiting,proto3,oneof"`
+}
+
+type ChatResponse_Ready struct {
+	Ready *ChatResponse_ReadyEvent `protobuf:"bytes,2,opt,name=ready,proto3,oneof"`
+}
+
+type ChatResponse_Chated struct {
+	Chated *ChatResponse_ChatedEvent `protobuf:"bytes,3,opt,name=chated,proto3,oneof"`
+}
+
+type ChatResponse_Finished struct {
+	Finished *ChatResponse_FinishedEvent `protobuf:"bytes,4,opt,name=finished,proto3,oneof"`
+}
+
+func (*ChatResponse_Waiting) isChatResponse_Event() {}
+
+func (*ChatResponse_Ready) isChatResponse_Event() {}
+
+func (*ChatResponse_Chated) isChatResponse_Event() {}
+
+func (*ChatResponse_Finished) isChatResponse_Event() {}
 
 type ChatRequest_StartAction struct {
 	state         protoimpl.MessageState
@@ -249,6 +311,167 @@ func (x *ChatRequest_TalkAction) GetMessage() string {
 	return ""
 }
 
+type ChatResponse_WaitingEvent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ChatResponse_WaitingEvent) Reset() {
+	*x = ChatResponse_WaitingEvent{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_chat_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChatResponse_WaitingEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatResponse_WaitingEvent) ProtoMessage() {}
+
+func (x *ChatResponse_WaitingEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatResponse_WaitingEvent.ProtoReflect.Descriptor instead.
+func (*ChatResponse_WaitingEvent) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{1, 0}
+}
+
+type ChatResponse_ReadyEvent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ChatResponse_ReadyEvent) Reset() {
+	*x = ChatResponse_ReadyEvent{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_chat_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChatResponse_ReadyEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatResponse_ReadyEvent) ProtoMessage() {}
+
+func (x *ChatResponse_ReadyEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatResponse_ReadyEvent.ProtoReflect.Descriptor instead.
+func (*ChatResponse_ReadyEvent) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{1, 1}
+}
+
+type ChatResponse_ChatedEvent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ChatLogs []string `protobuf:"bytes,5,rep,name=chatLogs,proto3" json:"chatLogs,omitempty"`
+}
+
+func (x *ChatResponse_ChatedEvent) Reset() {
+	*x = ChatResponse_ChatedEvent{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_chat_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChatResponse_ChatedEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatResponse_ChatedEvent) ProtoMessage() {}
+
+func (x *ChatResponse_ChatedEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatResponse_ChatedEvent.ProtoReflect.Descriptor instead.
+func (*ChatResponse_ChatedEvent) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{1, 2}
+}
+
+func (x *ChatResponse_ChatedEvent) GetChatLogs() []string {
+	if x != nil {
+		return x.ChatLogs
+	}
+	return nil
+}
+
+type ChatResponse_FinishedEvent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ChatResponse_FinishedEvent) Reset() {
+	*x = ChatResponse_FinishedEvent{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_chat_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChatResponse_FinishedEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatResponse_FinishedEvent) ProtoMessage() {}
+
+func (x *ChatResponse_FinishedEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatResponse_FinishedEvent.ProtoReflect.Descriptor instead.
+func (*ChatResponse_FinishedEvent) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{1, 3}
+}
+
 var File_proto_chat_proto protoreflect.FileDescriptor
 
 var file_proto_chat_proto_rawDesc = []byte{
@@ -270,15 +493,34 @@ var file_proto_chat_proto_rawDesc = []byte{
 	0x0a, 0x54, 0x61, 0x6c, 0x6b, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x18, 0x0a, 0x07, 0x6d,
 	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65,
 	0x73, 0x73, 0x61, 0x67, 0x65, 0x42, 0x08, 0x0a, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22,
-	0x2a, 0x0a, 0x0c, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x1a, 0x0a, 0x08, 0x63, 0x68, 0x61, 0x74, 0x4c, 0x6f, 0x67, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
-	0x09, 0x52, 0x08, 0x63, 0x68, 0x61, 0x74, 0x4c, 0x6f, 0x67, 0x73, 0x32, 0x42, 0x0a, 0x0b, 0x43,
-	0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x33, 0x0a, 0x04, 0x43, 0x68,
-	0x61, 0x74, 0x12, 0x11, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61,
-	0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x28, 0x01, 0x30, 0x01, 0x42,
-	0x08, 0x5a, 0x06, 0x67, 0x65, 0x6e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0xdf, 0x02, 0x0a, 0x0c, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x3b, 0x0a, 0x07, 0x77, 0x61, 0x69, 0x74, 0x69, 0x6e, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x1f, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x57, 0x61, 0x69, 0x74, 0x69, 0x6e, 0x67, 0x45, 0x76, 0x65,
+	0x6e, 0x74, 0x48, 0x00, 0x52, 0x07, 0x77, 0x61, 0x69, 0x74, 0x69, 0x6e, 0x67, 0x12, 0x35, 0x0a,
+	0x05, 0x72, 0x65, 0x61, 0x64, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x63,
+	0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x2e, 0x52, 0x65, 0x61, 0x64, 0x79, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x48, 0x00, 0x52, 0x05, 0x72,
+	0x65, 0x61, 0x64, 0x79, 0x12, 0x38, 0x0a, 0x06, 0x63, 0x68, 0x61, 0x74, 0x65, 0x64, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61, 0x74,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x65, 0x64, 0x45,
+	0x76, 0x65, 0x6e, 0x74, 0x48, 0x00, 0x52, 0x06, 0x63, 0x68, 0x61, 0x74, 0x65, 0x64, 0x12, 0x3e,
+	0x0a, 0x08, 0x66, 0x69, 0x6e, 0x69, 0x73, 0x68, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x20, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x46, 0x69, 0x6e, 0x69, 0x73, 0x68, 0x65, 0x64, 0x45, 0x76, 0x65,
+	0x6e, 0x74, 0x48, 0x00, 0x52, 0x08, 0x66, 0x69, 0x6e, 0x69, 0x73, 0x68, 0x65, 0x64, 0x1a, 0x0e,
+	0x0a, 0x0c, 0x57, 0x61, 0x69, 0x74, 0x69, 0x6e, 0x67, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x1a, 0x0c,
+	0x0a, 0x0a, 0x52, 0x65, 0x61, 0x64, 0x79, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x1a, 0x29, 0x0a, 0x0b,
+	0x43, 0x68, 0x61, 0x74, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x63,
+	0x68, 0x61, 0x74, 0x4c, 0x6f, 0x67, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x09, 0x52, 0x08, 0x63,
+	0x68, 0x61, 0x74, 0x4c, 0x6f, 0x67, 0x73, 0x1a, 0x0f, 0x0a, 0x0d, 0x46, 0x69, 0x6e, 0x69, 0x73,
+	0x68, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x42, 0x07, 0x0a, 0x05, 0x65, 0x76, 0x65, 0x6e,
+	0x74, 0x32, 0x42, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x12, 0x33, 0x0a, 0x04, 0x43, 0x68, 0x61, 0x74, 0x12, 0x11, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e,
+	0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x63, 0x68,
+	0x61, 0x74, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x28, 0x01, 0x30, 0x01, 0x42, 0x08, 0x5a, 0x06, 0x67, 0x65, 0x6e, 0x2f, 0x70, 0x62, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -293,25 +535,33 @@ func file_proto_chat_proto_rawDescGZIP() []byte {
 	return file_proto_chat_proto_rawDescData
 }
 
-var file_proto_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_proto_chat_proto_goTypes = []interface{}{
-	(*ChatRequest)(nil),             // 0: chat.ChatRequest
-	(*ChatResponse)(nil),            // 1: chat.ChatResponse
-	(*ChatRequest_StartAction)(nil), // 2: chat.ChatRequest.StartAction
-	(*ChatRequest_TalkAction)(nil),  // 3: chat.ChatRequest.TalkAction
-	(*User)(nil),                    // 4: chat.User
+	(*ChatRequest)(nil),                // 0: chat.ChatRequest
+	(*ChatResponse)(nil),               // 1: chat.ChatResponse
+	(*ChatRequest_StartAction)(nil),    // 2: chat.ChatRequest.StartAction
+	(*ChatRequest_TalkAction)(nil),     // 3: chat.ChatRequest.TalkAction
+	(*ChatResponse_WaitingEvent)(nil),  // 4: chat.ChatResponse.WaitingEvent
+	(*ChatResponse_ReadyEvent)(nil),    // 5: chat.ChatResponse.ReadyEvent
+	(*ChatResponse_ChatedEvent)(nil),   // 6: chat.ChatResponse.ChatedEvent
+	(*ChatResponse_FinishedEvent)(nil), // 7: chat.ChatResponse.FinishedEvent
+	(*User)(nil),                       // 8: chat.User
 }
 var file_proto_chat_proto_depIdxs = []int32{
-	4, // 0: chat.ChatRequest.user:type_name -> chat.User
+	8, // 0: chat.ChatRequest.user:type_name -> chat.User
 	2, // 1: chat.ChatRequest.start:type_name -> chat.ChatRequest.StartAction
 	3, // 2: chat.ChatRequest.talk:type_name -> chat.ChatRequest.TalkAction
-	0, // 3: chat.ChatService.Chat:input_type -> chat.ChatRequest
-	1, // 4: chat.ChatService.Chat:output_type -> chat.ChatResponse
-	4, // [4:5] is the sub-list for method output_type
-	3, // [3:4] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	4, // 3: chat.ChatResponse.waiting:type_name -> chat.ChatResponse.WaitingEvent
+	5, // 4: chat.ChatResponse.ready:type_name -> chat.ChatResponse.ReadyEvent
+	6, // 5: chat.ChatResponse.chated:type_name -> chat.ChatResponse.ChatedEvent
+	7, // 6: chat.ChatResponse.finished:type_name -> chat.ChatResponse.FinishedEvent
+	0, // 7: chat.ChatService.Chat:input_type -> chat.ChatRequest
+	1, // 8: chat.ChatService.Chat:output_type -> chat.ChatResponse
+	8, // [8:9] is the sub-list for method output_type
+	7, // [7:8] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_proto_init() }
@@ -369,10 +619,64 @@ func file_proto_chat_proto_init() {
 				return nil
 			}
 		}
+		file_proto_chat_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChatResponse_WaitingEvent); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_chat_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChatResponse_ReadyEvent); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_chat_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChatResponse_ChatedEvent); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_chat_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChatResponse_FinishedEvent); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_proto_chat_proto_msgTypes[0].OneofWrappers = []interface{}{
 		(*ChatRequest_Start)(nil),
 		(*ChatRequest_Talk)(nil),
+	}
+	file_proto_chat_proto_msgTypes[1].OneofWrappers = []interface{}{
+		(*ChatResponse_Waiting)(nil),
+		(*ChatResponse_Ready)(nil),
+		(*ChatResponse_Chated)(nil),
+		(*ChatResponse_Finished)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -380,7 +684,7 @@ func file_proto_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_chat_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

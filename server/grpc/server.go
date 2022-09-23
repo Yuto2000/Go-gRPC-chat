@@ -23,6 +23,7 @@ func main() {
 	server := grpc.NewServer()
 
 	pb.RegisterMatchServiceServer(server, handler.NewMatch())
+	pb.RegisterChatServiceServer(server, handler.NewChat())
 
 	reflection.Register(server)
 
